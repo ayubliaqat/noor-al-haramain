@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --background: #FAF8F3;       /* Warm White - main background */
+  --foreground: #172B2A;       /* Deep Charcoal - main text */
+
+  /* Brand */
+  --color-deep-teal: #063F3A;      /* Primary / Deep Teal */
+  --color-dark-teal: #02332F;      /* Darkest Background */
+  --color-emerald: #087F5B;        /* Primary Green */
+  --color-rich-emerald: #059669;   /* Hover Green */
+  --color-gold: #C9A227;           /* Gold Accent */
+  --color-gold-light: #DDBB55;     /* Gold Light */
+
+  /* Surfaces */
+  --color-warm-white: #FAF8F3;     /* Main Background */
+  --color-card: #FFFFFF;           /* Cards */
+
+  /* Text */
+  --color-charcoal: #172B2A;       /* Main Text */
+  --color-muted-teal: #5F716F;     /* Secondary Text */
+
+  /* Borders */
+  --color-soft-beige: #E8E3D8;     /* Borders */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-deep-teal: var(--color-deep-teal);
+  --color-dark-teal: var(--color-dark-teal);
+  --color-emerald: var(--color-emerald);
+  --color-rich-emerald: var(--color-rich-emerald);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-warm-white: var(--color-warm-white);
+  --color-card: var(--color-card);
+  --color-charcoal: var(--color-charcoal);
+  --color-muted-teal: var(--color-muted-teal);
+  --color-soft-beige: var(--color-soft-beige);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
