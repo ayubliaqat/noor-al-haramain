@@ -5,30 +5,48 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { users, accounts, sessions, verificationTokens } from "@/db/schema";
+import {
+  users,
+  accounts,
+  sessions,
+  verificationTokens,
+} from "@/db/schema";
 import { authConfig } from "./auth.config";
 import { loginSchema } from "@/lib/validations/user";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
+
   session: {
-    strategy: "jwt", // required for Credentials provider (no DB session lookups)
+    strategy: "jwt",
   },
+
   providers: [
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: {
+          label: "Email",
+          type: "email",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+        },
       },
+
       async authorize(credentials) {
         const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+
+        if (!parsed.success) {
+          return null;
+        }
 
         const { email, password } = parsed.data;
 
@@ -38,10 +56,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .where(eq(users.email, email))
           .limit(1);
 
-        if (!user || !user.password) return null;
+        if (!user || !user.password) {
+          return null;
+        }
 
-        const passwordsMatch = await bcrypt.compare(password, user.password);
-        if (!passwordsMatch) return null;
+        const passwordsMatch = await bcrypt.compare(
+          password,
+          user.password,
+        );
+
+        if (!passwordsMatch) {
+          return null;
+        }
 
         return {
           id: user.id,
@@ -53,4 +79,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (
+        typeof token.id === "string" &&
+        typeof token.role === "string"
+      ) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
+
+      return session;
+    },
+  },
 });
